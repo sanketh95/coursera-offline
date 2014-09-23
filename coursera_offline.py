@@ -74,11 +74,13 @@ def parse_arguments():
 	# Uses argparse.Argument parser to parse
 	# Commandline arguments
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-s", "--shortname", help="Short name of the course being downloaded")
+	parser.add_argument("-s", "--shortname", help="""Short name of the course being downloaded.
+		This option is required when running the script for the first time""")
 	parser.add_argument("-e", "--email", help="Email id registered with Coursera")
 	parser.add_argument("-p", "--password", help="Coursera Password")
-	parser.add_argument("-S", "--synch", help="Hit the coursera servers and synch the Video list", action='store_true')
-	parser.add_argument("-f","--file", help="Read contents of the json file and download the course", action='store_true')
+	parser.add_argument("-S", "--synch", help="Give this option to fetch the updated video content", action='store_true')
+	parser.add_argument("-f","--file", help="""Give this option to forces the script to obtain the course information from data.json 
+		instead of Coursera""", action='store_true')
 	args = parser.parse_args()
 
 	return args
