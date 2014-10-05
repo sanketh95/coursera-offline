@@ -1,0 +1,3 @@
+CHANGES
+
+1. Now copies the script to /usr/local/bin 
