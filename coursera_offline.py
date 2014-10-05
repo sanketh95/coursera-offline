@@ -6,8 +6,6 @@ import sys
 import urllib2
 import cookielib
 import random
-import time
-from math import ceil
 import urllib
 import threading
 import os
