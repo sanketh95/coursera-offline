@@ -29,27 +29,36 @@ DEFAULT_HEADERS = {
 	'Connection' : 'keep-alive'
 }
 
+SUB_DIR = 'Subs'
+VID_EXT = '.mp4'
+SUB_EXT = '.srt'
+
 class Downloader(threading.Thread):
 	"""Instance of threading.Thread class.
 	Takes a URL and downloads the video present in the url"""
-	def __init__(self, url, savepath, cookie):
+	def __init__(self, url, savepath, cookie, is_sub=False):
 		threading.Thread.__init__(self)
 		self.url = url
 		self.savepath = savepath
 		self.cookie = cookie
+		self.is_sub = is_sub
 
 	def run(self):
 		opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookie))
 		print 'Downloading to %s' % self.savepath
-		vid_file = None
+		f = None
 		try:
 			req = urllib2.Request(self.url, headers=DEFAULT_HEADERS)
-			vid_file = open(self.savepath, 'wb')
-			vid_file.write(opener.open(req).read())
-			vid_file.close()
+			if self.is_sub:
+				flags = 'w'
+			else:
+				flags = 'wb'
+			f = open(self.savepath, flags)
+			f.write(opener.open(req).read())
+			f.close()
 		except Exception, e:
-			if vid_file is not None:
-				vid_file.close()
+			if f is not None:
+				f.close()
 			if os.path.exists(self.savepath):
 				os.remove(self.savepath)
 
@@ -204,18 +213,26 @@ def download(parsed_json, cookie):
 	# Downloads the videos in parsed json
 	# using the cookie which is logged in
 	threads = []
+	week_count = 0
 	print 'Downloading videos'
 	for sub_json in parsed_json['data']:
-		folder_name = sub_json['title']
+		folder_name = str(week_count) + '-' + sub_json['title'].replace('/','-').replace(',','-').replace(':','-')
+		week_count += 1
 		create_folder(folder_name)
-		create_folder(os.path.join(folder_name, 'Subs'))
+		create_folder(os.path.join(folder_name, SUB_DIR))
+		count = 0
 		for vid_info in sub_json['links']:
+
 			url = vid_info['link']
 			title = vid_info['title']
+			old_vid_path = os.path.join(folder_name, title + VID_EXT)
+			old_sub_path = os.path.join(folder_name, SUB_DIR, title + SUB_EXT)
+			title = title.replace(':', '-').replace('/', '-').replace(',','-')
 			suburl = vid_info['sub_link']
-			sub_path = os.path.join(folder_name, 'Subs', title+'.srt')
-			vid_path = os.path.join(folder_name, title+'.mp4')
-			if os.path.exists(vid_path):
+			sub_path = os.path.join(folder_name, SUB_DIR, str(count) + '-' + title+SUB_EXT)
+			vid_path = os.path.join(folder_name, str(count) + '-' + title+VID_EXT)
+			count += 1
+			if os.path.exists(vid_path) or os.path.exists(old_vid_path):
 				print 'Skipping %s' % vid_path
 			else:
 				d = Downloader(url, vid_path, cookie)	
@@ -223,8 +240,11 @@ def download(parsed_json, cookie):
 
 			if os.path.exists(sub_path):
 				print 'Skipping %s' % sub_path
+			else if os.path.exists(old_sub_path):
+				d = Downloader(suburl, old_sub_path, cookie, True)
+				threads.append(d)
 			else:
-				d = Downloader(suburl, sub_path, cookie)
+				d = Downloader(suburl, sub_path, cookie, True)
 				threads.append(d)
 
 	for thread in threads:
