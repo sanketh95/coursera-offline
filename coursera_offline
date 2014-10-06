@@ -240,7 +240,7 @@ def download(parsed_json, cookie):
 
 			if os.path.exists(sub_path):
 				print 'Skipping %s' % sub_path
-			else if os.path.exists(old_sub_path):
+			elif os.path.exists(old_sub_path):
 				d = Downloader(suburl, old_sub_path, cookie, True)
 				threads.append(d)
 			else:
