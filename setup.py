@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
 	name = "coursera_offline",
 
-	version = "0.1.3",
+	version = "0.2.0",
 
 	author="Sanketh Mopuru",
 	author_email="sanketh.mopuru@gmail.com",
@@ -14,7 +14,8 @@ setup(
 	description = 'Download Coursera videos for offline viewing',
 
 	install_requires=[
-		"pyquery"
+		"pyquery",
+		"python-crontab"
 	],
 
 

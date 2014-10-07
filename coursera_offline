@@ -10,11 +10,11 @@ import urllib
 import threading
 import os
 from pyquery import PyQuery as pq
+from crontab import CronTab
 
 AUTH_URL = 'https://accounts.coursera.org/api/v1/login'
 CLASS_VIDEO_URL_TEMPLATE = 'https://class.coursera.org/%s/lecture'
 BASE_URL = 'https://www.coursera.org'
-COURSE_DATA = 'data.json'
 
 _204_DOMAIN = '.coursera.org'
 _204_PATH = '/'
@@ -32,6 +32,8 @@ DEFAULT_HEADERS = {
 SUB_DIR = 'Subs'
 VID_EXT = '.mp4'
 SUB_EXT = '.srt'
+DATA_FILE = 'data.json'
+COURSE_DIR = os.getcwd()
 
 class Downloader(threading.Thread):
 	"""Instance of threading.Thread class.
@@ -45,7 +47,7 @@ class Downloader(threading.Thread):
 
 	def run(self):
 		opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookie))
-		print 'Downloading to %s' % self.savepath
+		print 'Downloading to %s' % absolute_path(self.savepath)
 		f = None
 		try:
 			req = urllib2.Request(self.url, headers=DEFAULT_HEADERS)
@@ -53,24 +55,16 @@ class Downloader(threading.Thread):
 				flags = 'w'
 			else:
 				flags = 'wb'
-			f = open(self.savepath, flags)
+			f = open(absolute_path(self.savepath), flags)
 			f.write(opener.open(req).read())
 			f.close()
 		except Exception, e:
 			if f is not None:
 				f.close()
-			if os.path.exists(self.savepath):
-				os.remove(self.savepath)
+			if path_exists(self.savepath):
+				os.remove(absolute_path(self.savepath))
 
-		print 'Download finished for %s' % self.savepath
-
-	def _valid_savepath(self):
-		# Checks if the path to which the video is to
-		# saved is a valid one ie, if some other file
-		# exists or not
-		if not self.savepath: return False
-		return True
-
+		print 'Download finished for %s' % absolute_path(self.savepath)
 
 def exit_with_message(msg):
 	# Print the msg and exit the script
@@ -85,9 +79,18 @@ def parse_arguments():
 		This option is required when running the script for the first time""")
 	parser.add_argument("-e", "--email", help="Email id registered with Coursera")
 	parser.add_argument("-p", "--password", help="Coursera Password")
-	parser.add_argument("-S", "--synch", help="Give this option to fetch the updated video content", action='store_true')
-	parser.add_argument("-f","--file", help="""Give this option to forces the script to obtain the course information from data.json 
+	parser.add_argument("-S", "--synch", help="Give this flag to synch with Coursera", action='store_true')
+	parser.add_argument("-f","--file", help="""Give this flag to force the script to obtain the course information from data.json 
 		instead of Coursera""", action='store_true')
+	parser.add_argument("-d", "--dir", help="Give this option to save the videos in the path specified as argument.\
+	 Defaults to Present Working Directory (PWD).")
+	parser.add_argument("-a", "--auto", 
+		help="Give this option to create a crontab entry inorder to automatically synch with Coursera.\
+		Argument must one among 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'. The argument is optional and\
+		defaults to 'SUN'",
+		nargs='?',
+		const='SUN',
+		default=None)
 	args = parser.parse_args()
 
 	return args
@@ -108,21 +111,26 @@ def validate_arguments(args):
 	if args.file: count +=1
 
 	if count is 0:
-		exit_with_message('One of the options -s, -S, -f mush be given')
+		exit_with_message('One of the options -s, -S, -f must be given')
 
 def create_class_url(classname):
 	if classname in ('', None):
 		exit_with_message('Invalid class name')
 	return CLASS_VIDEO_URL_TEMPLATE % classname
 
+def absolute_path(rel_path):
+	# Return the path relative to course dir
+	return os.path.join(COURSE_DIR, rel_path)
+
 def parse_data_file():
 	# Parse the course data file
-	if not os.path.exists('data.json'):
+	if not path_exists(DATA_FILE):
 		exit_with_message('Data file does not exist')
 
 	try:
-		f = open('data.json')
+		f = open(absolute_path(DATA_FILE))
 		parsed_json = json.load(f)
+		f.close()
 	except Exception,e :
 		exit_with_message(e)
 
@@ -212,6 +220,10 @@ def login(email, password):
 def download(parsed_json, cookie):
 	# Downloads the videos in parsed json
 	# using the cookie which is logged in
+	if COURSE_DIR is not '':
+		create_folder('')
+
+	# Start the download
 	threads = []
 	week_count = 0
 	print 'Downloading videos'
@@ -232,15 +244,15 @@ def download(parsed_json, cookie):
 			sub_path = os.path.join(folder_name, SUB_DIR, str(count) + '-' + title+SUB_EXT)
 			vid_path = os.path.join(folder_name, str(count) + '-' + title+VID_EXT)
 			count += 1
-			if os.path.exists(vid_path) or os.path.exists(old_vid_path):
+			if path_exists(vid_path) or path_exists(old_vid_path):
 				print 'Skipping %s' % vid_path
 			else:
 				d = Downloader(url, vid_path, cookie)	
 				threads.append(d)
 
-			if os.path.exists(sub_path):
+			if path_exists(sub_path):
 				print 'Skipping %s' % sub_path
-			elif os.path.exists(old_sub_path):
+			elif path_exists(old_sub_path):
 				d = Downloader(suburl, old_sub_path, cookie, True)
 				threads.append(d)
 			else:
@@ -253,19 +265,52 @@ def download(parsed_json, cookie):
 	for thread in threads:
 		thread.join()
 
+def path_exists(path):
+	return os.path.exists(absolute_path(path))
+
 def create_folder(foldername):
 	# Creates the folders for each week
 	# Checks if a folder with that name already exists
 	# Skip if it exists
-	if os.path.exists(foldername):
+	if path_exists(foldername):
 		return False
-	os.makedirs(foldername)
+	os.makedirs(absolute_path(foldername))
 	return True
+
+def data_file_exists():
+	return path_exists(DATA_FILE)
+
+def set_course_dir(dir):
+	if not dir:
+		return
+	global COURSE_DIR
+	COURSE_DIR = dir;
+
+def schedule_synch(day, email, password):
+	if not day:
+		exit_with_message('Failed to schedule synch: Invalid day')
+	if not email or not password:
+		exit_with_message('Invalid username and password')
+	day = day.upper()
+	if not day in ['MON','TUE','WED','THU','FRI','SAT','SUN']:
+		exit_with_message('Failed to schedule synch: Invalid day')
+	user_cron = CronTab(user=True)
+	cmd = "/usr/local/bin/coursera_offline -d %s -S -e %s -p %s" % (COURSE_DIR, email, password)
+	job = user_cron.new(command=cmd)
+	job.hour.on(11)
+	job.minute.on(59)
+	job.dow.on(day)
+	user_cron.write()
+	print 'Cron Job added'
 
 def main():
 	args = parse_arguments()
 	validate_arguments(args)
+	if args.dir is not None:
+		set_course_dir(os.path.abspath(args.dir))
 	if args.shortname is not None:
+		if data_file_exists():
+			exit_with_message('Looks like a course already exists here.')
 		shortname = args.shortname
 	else:
 		parsed_json = parse_data_file()
@@ -279,8 +324,15 @@ def main():
 	if not args.file:
 		parsed_json = get_course_info(shortname, cookie_logged_in)	
 	download(parsed_json, cookie_logged_in)
+	save_data_file(parsed_json)
+	if args.auto is not None:
+		schedule_synch(args.auto, args.email, args.password)		
+
+def save_data_file(parsed_json):
+	if not parsed_json:
+		exit_with_message('Invalid data to save')
 	try:
-		f = open('data.json', 'w')
+		f = open(absolute_path(DATA_FILE), 'w')
 		f.write(json.dumps(parsed_json))
 		f.close()
 	except Exception, e:

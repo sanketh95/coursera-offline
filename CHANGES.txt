@@ -1,3 +1,5 @@
 CHANGES
 
-1. Now copies the script to /usr/local/bin 
+1. Sets up cron jobs to automatically synch the videos.
+2. Renames the folders and files to maintain the order.
+3. Options to enter the savepath (The path in which the videos are to be saved) as commandline argument.
