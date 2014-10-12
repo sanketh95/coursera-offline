@@ -25,7 +25,7 @@ setup(
 		"python-crontab"
 	],
 
-	keywords = "coursera offline download lecture lectures video videos"
+	keywords = "coursera offline download lecture lectures video videos",
 
 	scripts=['coursera_offline']
 	)
