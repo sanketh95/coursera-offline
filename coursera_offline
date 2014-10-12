@@ -295,7 +295,7 @@ def schedule_synch(day, email, password):
 	if not day in ['MON','TUE','WED','THU','FRI','SAT','SUN']:
 		exit_with_message('Failed to schedule synch: Invalid day')
 	user_cron = CronTab(user=True)
-	cmd = "/usr/local/bin/coursera_offline -d %s -S -e %s -p %s" % (COURSE_DIR, email, password)
+	cmd = "%s -d %s -S -e %s -p %s" % (os.path.abspath(__file__), COURSE_DIR, email, password)
 	job = user_cron.new(command=cmd)
 	job.hour.on(11)
 	job.minute.on(59)
