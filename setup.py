@@ -11,8 +11,6 @@ setup(
 	url='https://github.com/sanketh95/coursera-offline',
 	license='GPLv3',
 
-	install_requires = ['docutils>=0.3'],
-
 	package_data = {
 	        # If any package contains *.txt or *.rst files, include them:
 	        '': ['*.rst', '*.md'],
@@ -21,8 +19,9 @@ setup(
 	description = 'Download Coursera videos for offline viewing',
 
 	install_requires=[
-		"pyquery",
-		"python-crontab"
+		"pyquery>=1.2.9",
+		"python-crontab>=1.8.1",
+		"docutils>=0.3"
 	],
 
 	keywords = "coursera offline download lecture lectures video videos",
