@@ -50,7 +50,7 @@ class Downloader(threading.Thread):
 		print 'Downloading to %s' % absolute_path(self.savepath)
 		f = None
 		try:
-			req = urllib2.Request(self.url, headers=DEFAULT_HEADERS)
+			req = urllib2.Request(self.url)
 			if self.is_sub:
 				flags = 'w'
 			else:
