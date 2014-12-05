@@ -26,5 +26,5 @@ setup(
 
 	keywords = "coursera offline download lecture lectures video videos",
 
-	scripts=['coursera_offline']
+	scripts=['coursera_offline.py']
 	)
