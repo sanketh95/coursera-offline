@@ -6,3 +6,8 @@ CHANGES
 
 
 Added support for windows
+
+
+----------------------CHANGES------------------------
+--------------------VERSION 1.0.0--------------------
+1. Added cookie support. User no longer needs to give login credentials everytime as long as he/she has the cookie file.

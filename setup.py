@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
 	name = "coursera_offline",
 
-	version = "0.2.5",
+	version = "1.0.0",
 
 	author="Sanketh Mopuru",
 	author_email="sanketh.mopuru@gmail.com",

@@ -33,7 +33,7 @@ SUB_DIR = 'Subs'
 VID_EXT = '.mp4'
 SUB_EXT = '.srt'
 DATA_FILE = 'data.json'
-COOKIE_FILE = 'cookie.txt'
+COOKIE_FILE = 'cookie.cookies'
 COURSE_DIR = os.getcwd()
 
 class Downloader(threading.Thread):
@@ -107,7 +107,8 @@ def validate_arguments(args):
         exit_with_message('')
 
     if not args.email or not args.password:
-        exit_with_message('Please provide both email and password')
+        if not has_cookiefile():
+            exit_with_message('Please provide both email and password')
 
     count = 0
     if args.shortname is not None: count += 1
@@ -149,8 +150,11 @@ def login(email, password):
     # Returns the cookie jar
     cookie_jar = cookielib.LWPCookieJar(absolute_path(COOKIE_FILE))
     if has_cookiefile():
-        cookie_jar.load()
-        return cookie_jar
+        cookie_jar.load(ignore_discard=True)
+        if isLoggedIn(cookie_jar):
+            return cookie_jar
+        elif not email or not password:
+            exit_with_message('Provide email and password')
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar))
 
     csrf2_token = 'csrf2_token_' + csrfMake(8)
@@ -218,12 +222,9 @@ def login(email, password):
     except Exception, e:
         print e
         sys.exit()
-
     if not isLoggedIn(cookie_jar):
         exit_with_message('Login Failed. Try again later')
-    
-    cookie_jar.save()
-
+    cookie_jar.save(ignore_discard=True)
     return cookie_jar
 
 def download(parsed_json, cookie):
@@ -325,7 +326,7 @@ def main():
         parsed_json = parse_data_file()
         shortname = parsed_json['cname']
 
-    print 'Logging in %s' % args.email
+    print 'Logging in'
     cookie_logged_in = login(args.email, args.password)
     if not cookie_logged_in:
         exit_with_message('Login Failed.')
