@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
 	name = "coursera_offline",
 
-	version = "1.0.0",
+	version = "1.0.1",
 
 	author="Sanketh Mopuru",
 	author_email="sanketh.mopuru@gmail.com",
@@ -13,10 +13,14 @@ setup(
 
 	package_data = {
 	        # If any package contains *.txt or *.rst files, include them:
-	        '': ['*.rst', '*.md'],
+	        '': ['*.rst', '*.md', '*.txt'],
 	    },
 
 	description = 'Download Coursera videos for offline viewing',
+
+	long_description=(
+		open('README.rst').read()
+	),
 
 	install_requires=[
 		"pyquery>=1.2.9",
