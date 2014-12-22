@@ -294,7 +294,10 @@ def set_course_dir(dir):
     if not dir:
         return
     global COURSE_DIR
-    COURSE_DIR = dir;
+    abspath = os.path.abspath(dir)
+    if not os.path.exists(abspath):
+        os.makedirs(abspath)
+    COURSE_DIR = abspath;
 
 def schedule_synch(day, email, password):
     if not day:
