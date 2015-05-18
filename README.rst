@@ -110,6 +110,8 @@ Features
    all the information required to fetch the videos. So even if you lose
    some videos or if you forget the course name, as long as you have the
    *data.json* file, you can always re-download the lost videos.
+-  The script saves the session cookies so you don't have to login everytime you run it.
+-  The script fetches the lecture slides (pdfs and ppts) and saves them in 'Other Files' folder.
 
 Full Usage
 ----------

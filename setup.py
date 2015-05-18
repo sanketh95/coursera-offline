@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
 	name = "coursera_offline",
 
-	version = "1.0.2",
+	version = "1.1.0",
 
 	author="Sanketh Mopuru",
 	author_email="sanketh.mopuru@gmail.com",
@@ -28,7 +28,7 @@ setup(
 		"docutils>=0.3"
 	],
 
-	keywords = "coursera offline download lecture lectures video videos",
+	keywords = "coursera offline download lecture lectures videos and slides",
 
 	scripts=['coursera_offline.py']
 	)

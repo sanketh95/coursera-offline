@@ -64,6 +64,7 @@ Run `export HTTP_PROXY=http://user:password@address:port` and `export HTTPS_PROX
 * The script also downloads the subtitles automatically and saves them in *Subs* folder. So when you play the videos using VLC, the subs are automatically loaded.
 * The script saves a *data.json* file in the course directory. This has all the information required to fetch the videos. So even if you lose some videos or if you forget the course name, as long as you have the *data.json* file, you can always re-download the lost videos.
 * The script saves the session cookies so you don't have to login everytime you run it.
+* The script fetches the lecture slides (pdfs and ppts) and saves them in 'Other Files' folder.
 
 
 ## <a name="full-usage"></a>Full Usage

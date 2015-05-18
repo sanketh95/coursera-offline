@@ -15,3 +15,7 @@ Added support for windows
 --------------------VERSION 1.0.2----------------------
 1. Fixed a bug where -d option required the directory given as option to exist. Now the script creates the directory if it doesn't exist.
 2. The directory path given for -d can now be relative and the script takes care of converting it to absolute path.
+
+--------------------VERSION 1.1.0------------------------
+1. Script can now download lecture slides (pdfs and ppts).
+2. Saves the data.json file prior to downloading.

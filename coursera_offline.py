@@ -35,6 +35,7 @@ SUB_EXT = '.srt'
 DATA_FILE = 'data.json'
 COOKIE_FILE = 'cookie.cookies'
 COURSE_DIR = os.getcwd()
+OTHER_DIR = 'Other Files'
 
 class Downloader(threading.Thread):
     """Instance of threading.Thread class.
@@ -66,6 +67,21 @@ class Downloader(threading.Thread):
                 os.remove(absolute_path(self.savepath))
 
         print 'Download finished for %s' % absolute_path(self.savepath)
+
+def get_vid_sub_links(anchor_elems):
+    vid_link = None
+    sub_link = None
+    other_links = []
+    for anchor_elem in anchor_elems:
+        temp = pq(anchor_elem)
+        href = temp.attr('href');
+        if href.find('subtitles') != -1 and href.find('format=srt') != -1:
+            sub_link = href
+        elif href.find('download.mp4') != -1:
+            vid_link = href
+        elif href.find('.pdf') != -1 or href.find('.pptx') != -1:
+            other_links.append(href)
+    return vid_link, sub_link, other_links
 
 def exit_with_message(msg):
     # Print the msg and exit the script
@@ -242,6 +258,7 @@ def download(parsed_json, cookie):
         week_count += 1
         create_folder(folder_name)
         create_folder(os.path.join(folder_name, SUB_DIR))
+        create_folder(os.path.join(folder_name, OTHER_DIR))
         count = 0
         for vid_info in sub_json['links']:
 
@@ -268,6 +285,15 @@ def download(parsed_json, cookie):
             else:
                 d = Downloader(suburl, sub_path, cookie, True)
                 threads.append(d)
+
+            for other_link in vid_info['other_links']:
+                other_title = other_link.split('/')[-1]
+                other_path = os.path.join(folder_name, OTHER_DIR, str(count) + '-' + other_title)
+                if path_exists(other_path):
+                    print 'Skipping %s' % other_path
+                else:
+                    p = Downloader(other_link, other_path, cookie)
+                    threads.append(p)
 
     for thread in threads:
         thread.start()
@@ -336,8 +362,8 @@ def main():
 
     if not args.file:
         parsed_json = get_course_info(shortname, cookie_logged_in)    
-    download(parsed_json, cookie_logged_in)
     save_data_file(parsed_json)
+    download(parsed_json, cookie_logged_in)
     if args.auto is not None:
         schedule_synch(args.auto, args.email, args.password)        
 
@@ -389,10 +415,9 @@ def get_course_info(shortname, cookie):
             for list_item in list_items:
                 list_elem = pq(list_item)
                 anchor_elems = list_elem('a')
-                vid_title = pq(anchor_elems[0]).text()
-                vid_link = pq(anchor_elems[len(anchor_elems) - 1]).attr('href')
-                sub_link = pq(anchor_elems[len(anchor_elems) - 2]).attr('href')
-                parsed_json['links'].append({'title':vid_title, 'link':vid_link, 'sub_link':sub_link})
+                vid_title = pq(anchor_elems[0]).text()  
+                vid_link, sub_link, other_links = get_vid_sub_links(anchor_elems)
+                parsed_json['links'].append({'title':vid_title, 'link':vid_link, 'sub_link':sub_link, 'other_links': other_links})
             course_info_json['data'].append(parsed_json)
     except Exception, e:    
         exit_with_message('Invalid HTML file receieved')
