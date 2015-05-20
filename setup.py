@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
 	name = "coursera_offline",
 
-	version = "1.1.0",
+	version = "1.1.3",
 
 	author="Sanketh Mopuru",
 	author_email="sanketh.mopuru@gmail.com",
@@ -16,7 +16,7 @@ setup(
 	        '': ['*.rst', '*.md', '*.txt'],
 	    },
 
-	description = 'Download Coursera videos for offline viewing',
+	description = 'Download Coursera videos and lecture slides for offline viewing',
 
 	long_description=(
 		open('README.rst').read()

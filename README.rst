@@ -4,28 +4,12 @@ Coursera Offline
 Download and save the video lectures of your favorite courses for
 offline viewing.
 
-Contents
-========
-
--  `Installation <#installation>`__
--  `Proxy Settings <#for-those-behind-proxy>`__
--  `Requires <#requires>`__
--  `Running <#running>`__
--  `Features <#features>`__
--  `Full Usage <#full-usage>`__
--  `Some sample invocations <#some-sample-invocations>`__
--  `First time download <#first-time-download>`__
--  `Obtaining the shortname <#obtaining-the-shortname>`__
--  `Synching <#synching>`__
--  `Auto Synch <#auto-synch>`__
--  `Fetch using file <#fetch-using-file>`__
-
 Installation
 ------------
 
 -  Make sure you have python version 2.7 installed. If you don't have
    python, get it from
-   `here <https://www.python.org/download/releases/2.7/>`__
+   `official site <https://www.python.org/download/releases/2.7/>`_.
 -  If you have python and are not sure of the version, type
    ``python -V`` in the terminal. If it says 2.7.x+ then you may proceed
    to the next instruction. Otherwise, go to the link provided above.
@@ -34,11 +18,10 @@ Installation
 -  Before proceeding to the next step, make sure you have ``setuptools``
    module installed. If it isn't, you can find the installation
    instructions
-   `here <https://pypi.python.org/pypi/setuptools#installation-instructions>`__.
+   `here <https://pypi.python.org/pypi/setuptools#installation-instructions>`_.
 -  If you don't want to install pip, you can download the tar.gz from
-   `PyPi <https://pypi.python.org/packages/source/c/coursera_offline/coursera_offline-0.1.0.tar.gz>`__
-   or zip from
-   `Github <https://github.com/sanketh95/coursera-offline/archive/master.zip>`__,
+   `PyPi <https://pypi.python.org/packages/source/c/coursera_offline/coursera_offline-0.1.0.tar.gz>`_
+   or zip from `Github <https://github.com/sanketh95/coursera-offline/archive/master.zip>`_,
    extract the archive file and follow the installation instructions in
    the README.txt file.
 -  You may also clone the repo onto your local workstation and follow
@@ -46,26 +29,22 @@ Installation
    ``git clone https://github.com/sanketh95/coursera-offline``
 
 For those behind proxy
-^^^^^^^^^^^^^^^^^^^^^^
 
 You just need to set ``HTTP_PROXY`` and ``HTTPS_PROXY`` environment
 variables and python automatically sends all requests through proxy.
 Here's the way to set proxy in windows and linux
 
-Windows
-'''''''
+Windows 
 
 Run ``set HTTP_PROXY=http://user:password@address:port`` and
 ``set HTTPS_PROXY=https://user:password@address:port``
 
-Linux
-'''''
+Linux 
 
 Run ``export HTTP_PROXY=http://user:password@address:port`` and
 ``export HTTPS_PROXY=https://user:password@address:port``
 
-REQUIRES
-~~~~~~~~
+REQUIRES 
 
 -  Python2.7
 -  pyquery 1.2.9
@@ -78,14 +57,12 @@ Running
 -------
 
 Windows
-~~~~~~~
 
 -  Open command prompt and change the ``cd`` into the directory
    containing **coursera-offline** and run
    ``python coursera_offline -h``
 
-Linux
-~~~~~
+Linux 
 
 -  Open terminal and run ``coursera_offline -h``.
 
@@ -110,8 +87,10 @@ Features
    all the information required to fetch the videos. So even if you lose
    some videos or if you forget the course name, as long as you have the
    *data.json* file, you can always re-download the lost videos.
--  The script saves the session cookies so you don't have to login everytime you run it.
--  The script fetches the lecture slides (pdfs and ppts) and saves them in 'Other Files' folder.
+-  The script saves the session cookies so you don't have to login
+   everytime you run it.
+-  The script fetches the lecture slides (pdfs and ppts) and saves them
+   in 'Other Files' folder.
 
 Full Usage
 ----------
@@ -153,7 +132,6 @@ Let's say you're downloading a course called **Introduction to Logic**
 and you want to download it to the ``~/Logic`` directory.
 
 First time download
-^^^^^^^^^^^^^^^^^^^
 
 ::
 
@@ -170,11 +148,10 @@ unique for every course. It can be obtained from the class url. For
 example for the course under discussion, the url is
 https://class.coursera.org/intrologic-005.
 
-Obtaining the shortname
-'''''''''''''''''''''''
+Obtaining the shortname 
 
 -  Signin to Coursera from
-   `here <https://accounts.coursera.org/signin>`__.
+   ``here <https://accounts.coursera.org/signin>``\ \_\_.
 -  You'll be redirected to a page containing all your registered
    courses.
 -  Choose the course you want to download and click the **Go to class**
@@ -186,8 +163,7 @@ Obtaining the shortname
 **Note:** If the ``-d`` options is not given, the videos will be
 downloaded to the current working directory.
 
-Synching
-^^^^^^^^
+Synching 
 
 ::
 
@@ -198,8 +174,7 @@ the updated videos. Don't worry, there's a way to do it ! The above
 command takes care of fetching the updated video content and synching it
 with your local directories.
 
-Auto Synch
-^^^^^^^^^^
+Auto Synch 
 
 ::
 
@@ -214,8 +189,7 @@ day of the week. If no day is specified, it is defaulted to **Sunday**.
 **Note:** You can still force the script to synch with Coursera by using
 the Synch command described above.
 
-Fetch using file
-^^^^^^^^^^^^^^^^
+Fetch using file 
 
 ::
 
