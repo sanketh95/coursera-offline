@@ -1,7 +1,7 @@
 # Coursera Offline
 
-[![PyPi version](https://pypin.in/v/coursera-offline/badge.png)](https://github.com/sanketh95/coursera-offline)
-[![PyPi downloads](https://pypin.in/d/coursera-offline/badge.png)](https://github.com/sanketh95/coursera-offline)
+[![PyPi version](https://pypip.in/v/coursera-offline/badge.png)](https://github.com/sanketh95/coursera-offline)
+[![PyPi downloads](https://pypip.in/d/coursera-offline/badge.png)](https://github.com/sanketh95/coursera-offline)
 
 Download and save the video lectures of your favorite courses for offline viewing.
 
