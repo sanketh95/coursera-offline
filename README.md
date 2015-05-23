@@ -1,7 +1,7 @@
 # Coursera Offline
 
-[![PyPi version](https://pypip.in/v/coursera-offline/badge.png)](http://pypi.python.org/pypi/coursera_offline)
-[![PyPi downloads](https://pypip.in/d/coursera-offline/badge.png)](http://pypi.python.org/pypi/coursera_offline)
+[![PyPi version](https://img.shields.io/pypi/v/coursera_offline.svg)](http://pypi.python.org/pypi/coursera_offline)
+[![PyPi downloads](https://img.shields.io/pypi/dm/coursera_offline.svg)](http://pypi.python.org/pypi/coursera_offline)
 
 Download and save the video lectures of your favorite courses for offline viewing.
 
