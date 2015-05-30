@@ -26,7 +26,11 @@ DEFAULT_HEADERS = {
     'Accept' : '*/*',
     'Accept-Encoding' : 'gzip,deflate,sdch',
     'Accept-Language' : 'en-US,en;q=0.8',
-    'Connection' : 'keep-alive'
+    'Connection' : 'keep-alive',
+    'Referer': 'https://accounts.coursera.org/signin',
+    'Origin': 'https://accounts.coursera.org',
+    'X-Requested-With': 'XMLHttpRequest',
+    'Content-Type': 'application/x-www-form-urlencoded'
 }
 
 SUB_DIR = 'Subs'
@@ -180,30 +184,20 @@ def login(email, password):
     cookie_jar.set_cookie(csrf)
     cookie_jar.set_cookie(csrf2)
 
-    new_headers = DEFAULT_HEADERS
-    new_headers['Referer'] = 'https://accounts.coursera.org/signin'
-    new_headers['X-CSRFToken'] = csrf_token
-    new_headers['X-CSRF2-Token'] = csrf2_token_value
-    new_headers['X-CSRF2-Cookie'] = csrf2_token
-    new_headers['Origin'] = 'https://accounts.coursera.org'
-    new_headers['X-Requested-With'] = 'XMLHttpRequest'
-    new_headers['Content-Type'] = 'application/x-www-form-urlencoded'
-
+    DEFAULT_HEADERS['X-CSRFToken'] = csrf_token
+    DEFAULT_HEADERS['X-CSRF2-Token'] = csrf2_token_value
+    DEFAULT_HEADERS['X-CSRF2-Cookie'] = csrf2_token
     data = {
         'email' : email,
         'password' : password,
         'webrequest' : 'true'
     }
 
-    login_req = urllib2.Request(AUTH_URL, urllib.urlencode(data), new_headers)
-    login_res = None
     try:
-        login_res = opener.open(login_req)
+        login_res = opener.open(urllib2.Request(AUTH_URL, urllib.urlencode(data), DEFAULT_HEADERS))
     except Exception, e:
-        print e
-        sys.exit()
-    if not isLoggedIn(cookie_jar):
-        exit_with_message('Login Failed. Try again later')
+        exit_with_message(e)
+    if not isLoggedIn(cookie_jar): exit_with_message('Login Failed. Try again later')
     cookie_jar.save(ignore_discard=True)
     return cookie_jar
 
