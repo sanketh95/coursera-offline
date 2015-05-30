@@ -57,10 +57,7 @@ class Downloader(threading.Thread):
         f = None
         try:
             req = urllib2.Request(self.url)
-            if self.is_sub:
-                flags = 'w'
-            else:
-                flags = 'wb'
+            flags = 'w' if self.is_sub else 'wb'
             f = open(absolute_path(self.savepath), flags)
             f.write(opener.open(req).read())
             f.close()
@@ -70,7 +67,7 @@ class Downloader(threading.Thread):
             if path_exists(self.savepath):
                 os.remove(absolute_path(self.savepath))
 
-        print 'Download finished for %s' % absolute_path(self.savepath)
+        print('Download finished for %s' % absolute_path(self.savepath))
 
 def get_vid_sub_links(anchor_elems):
     vid_link = None
@@ -197,7 +194,8 @@ def login(email, password):
         login_res = opener.open(urllib2.Request(AUTH_URL, urllib.urlencode(data), DEFAULT_HEADERS))
     except Exception, e:
         exit_with_message(e)
-    if not isLoggedIn(cookie_jar): exit_with_message('Login Failed. Try again later')
+    if not isLoggedIn(cookie_jar): 
+        exit_with_message('Login Failed. Try again later')
     cookie_jar.save(ignore_discard=True)
     return cookie_jar
 
