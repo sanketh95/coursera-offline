@@ -421,16 +421,9 @@ def isLoggedIn(cookie):
             return True
     return False
 
-def csrfMake(length=None, chars=None):
-    output = []
-    if length is None:
-        length = 24
-    if chars is None:
-        chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
-    for i in range(length):
-        output.append(chars[int(random.random() * len(chars))])
-    return ''.join(output )
+def csrfMake(length=24, 
+    chars='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+    return ''.join([chars[int(random.random() * len(chars))] for i in range(length)])
 
 if __name__ == "__main__":
     main()
