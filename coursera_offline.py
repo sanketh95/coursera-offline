@@ -119,9 +119,7 @@ def validate_arguments(args):
     # Checks if both username and password are provided
     # Exits the script if either username or password is
     # not provided. 
-    if not args:
-        exit_with_message('')
-
+    if not args: exit_with_message('')
     if not args.email or not args.password:
         if not has_cookiefile():
             exit_with_message('Please provide both email and password')
