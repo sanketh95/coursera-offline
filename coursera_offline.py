@@ -177,42 +177,8 @@ def login(email, password):
     csrf2_token_value = csrfMake()
     csrf_token = csrfMake()
 
-    csrf2 = cookielib.Cookie(version=0,
-                        name=csrf2_token,
-                        value=csrf2_token_value,
-                        domain=_204_DOMAIN,
-                        domain_specified=False,
-                        domain_initial_dot=False,
-                        path=_204_PATH,
-                        path_specified=False,
-                        secure=False,
-                        expires=None,
-                        comment=None,
-                        comment_url=None,
-                        rest={'HttpOnly':None},
-                        rfc2109=False,
-                        discard=False,
-                        port=None,
-                        port_specified=False)
-
-    csrf = cookielib.Cookie(version=0,
-                    name='csrftoken',
-                    value=csrf_token,
-                    domain=_204_DOMAIN,
-                    domain_specified=False,
-                    domain_initial_dot=False,
-                    path=_204_PATH,
-                    path_specified=False,
-                    secure=False,
-                    expires=None,
-                    comment=None,
-                    comment_url=None,
-                    rest={'HttpOnly':None},
-                    rfc2109=False,
-                    discard=False,
-                    port=None,
-                    port_specified=False)
-
+    csrf2 = get_cookie(csrf2_token, csrf2_token_value)
+    csrf = get_cookie('csrftoken', csrf_token)
     cookie_jar.set_cookie(csrf)
     cookie_jar.set_cookie(csrf2)
 
@@ -376,6 +342,26 @@ def save_data_file(parsed_json):
         f.close()
     except Exception, e:
         exit_with_message('Failed to save the JSON file')
+
+def get_cookie(name, value):
+    return cookielib.Cookie(version=0,
+                name=name,
+                value=value,
+                domain=_204_DOMAIN,
+                domain_specified=False,
+                domain_initial_dot=False,
+                path=_204_PATH,
+                path_specified=False,
+                secure=False,
+                expires=None,
+                comment=None,
+                comment_url=None,
+                rest={'HttpOnly':None},
+                rfc2109=False,
+                discard=False,
+                port=None,
+                port_specified=False
+            )
 
 def get_course_info(shortname, cookie):
     print 'Getting course information %s' % shortname
