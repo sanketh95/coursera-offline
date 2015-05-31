@@ -372,23 +372,28 @@ def get_course_info(shortname, cookie):
     course_info_json = {'cname': shortname, 'data':[]}
     html_headers = doc('.course-item-list-header')
     try:
-        for index, html_header in enumerate(html_headers):
-            div_elem = pq(html_header)
-            week_title = div_elem('h3').text()
-            selection_list =doc('.course-item-list-section-list').eq(index)
-            list_items = selection_list('li')
-            parsed_json = {'title': week_title, 'links': []}
-            for list_item in list_items:
-                list_elem = pq(list_item)
-                anchor_elems = list_elem('a')
-                vid_title = pq(anchor_elems[0]).text()  
-                vid_link, sub_link, other_links = get_vid_sub_links(anchor_elems)
-                parsed_json['links'].append({'title':vid_title, 'link':vid_link, 'sub_link':sub_link, 'other_links': other_links})
-            course_info_json['data'].append(parsed_json)
-    except Exception, e:    
+        html_headers.each(lambda x,y: parse_week_info(x,y, doc, course_info_json))
+    except Exception, e:   
         exit_with_message('Invalid HTML file receieved')
 
     return course_info_json
+
+def parse_week_info(i, e, d, j):
+    de = pq(e)
+    wt = de('h3').text()
+    sl = d('.course-item-list-section-list').eq(i)
+    parsed_json = {'title': wt, 'links': []}
+    for li in sl('li'):
+        _li = pq(li)
+        _as = _li('a')
+        vl, sl, ol = get_vid_sub_links(_as)
+        parsed_json['links'].append({
+            'title': pq(_as[0]).text(),
+            'link': vl,
+            'sub_link': sl,
+            'other_links': ol
+        })
+    j['data'].append(parsed_json)
 
 def isLoggedIn(cookie):
     # Checks if the cookie object has cookies 
