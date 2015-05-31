@@ -372,16 +372,16 @@ def get_course_info(shortname, cookie):
     course_info_json = {'cname': shortname, 'data':[]}
     html_headers = doc('.course-item-list-header')
     try:
-        html_headers.each(lambda x,y: parse_week_info(x,y, doc, course_info_json))
+        html_headers.each(lambda x,y: parse_week_info(x,y, 
+            doc('.course-item-list-section-list').eq(x), course_info_json))
     except Exception, e:   
         exit_with_message('Invalid HTML file receieved')
 
     return course_info_json
 
-def parse_week_info(i, e, d, j):
+def parse_week_info(i, e, sl, j):
     de = pq(e)
     wt = de('h3').text()
-    sl = d('.course-item-list-section-list').eq(i)
     parsed_json = {'title': wt, 'links': []}
     for li in sl('li'):
         _li = pq(li)
