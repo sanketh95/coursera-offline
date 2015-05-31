@@ -356,27 +356,17 @@ def get_cookie(name, value):
 def get_course_info(shortname, cookie):
     print 'Getting course information %s' % shortname
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie))
-    url = create_class_url(shortname)
-    response_html = None
-
     print 'Fetching course videos page'
     try:
-        req = urllib2.Request(url)
+        req = urllib2.Request(create_class_url(shortname))
         res = opener.open(req)
         response_html = res.read()
     except Exception, e:
-        print e
-
-    if not response_html:
         exit_with_message('Failed to fetch the course information')
 
-    doc = None
     try:
         doc = pq(response_html)
     except Exception, e:
-        exit_with_message(e)
-
-    if not doc:
         exit_with_message('Failed to parse the html file')
 
     course_info_json = {'cname': shortname, 'data':[]}
