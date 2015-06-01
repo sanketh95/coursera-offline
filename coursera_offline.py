@@ -207,39 +207,31 @@ def download(parsed_json, cookie):
 
     # Start the download
     threads = []
-    week_count = 0
     print 'Downloading videos'
-    for sub_json in parsed_json['data']:
+    for week_count, sub_json in enumerate(parsed_json['data']):
         folder_name = str(week_count) + '-' + sub_json['title'].replace('/','-').replace(',','-').replace(':','-')
-        week_count += 1
         create_folder(folder_name)
         create_folder(os.path.join(folder_name, SUB_DIR))
         create_folder(os.path.join(folder_name, OTHER_DIR))
-        count = 0
-        for vid_info in sub_json['links']:
-
-            url = vid_info['link']
-            title = vid_info['title']
+        for count, vid_info in enumerate(sub_json['links']):
+            title = vid_info['title'].replace(':', '-').replace('/', '-').replace(',','-')
             old_vid_path = os.path.join(folder_name, title + VID_EXT)
             old_sub_path = os.path.join(folder_name, SUB_DIR, title + SUB_EXT)
-            title = title.replace(':', '-').replace('/', '-').replace(',','-')
-            suburl = vid_info['sub_link']
             sub_path = os.path.join(folder_name, SUB_DIR, str(count) + '-' + title+SUB_EXT)
             vid_path = os.path.join(folder_name, str(count) + '-' + title+VID_EXT)
-            count += 1
             if path_exists(vid_path) or path_exists(old_vid_path):
                 print 'Skipping %s' % vid_path
             else:
-                d = Downloader(url, vid_path, cookie)    
+                d = Downloader(vid_info['link'], vid_path, cookie)    
                 threads.append(d)
 
             if path_exists(sub_path):
                 print 'Skipping %s' % sub_path
             elif path_exists(old_sub_path):
-                d = Downloader(suburl, old_sub_path, cookie, True)
+                d = Downloader(vid_info['sub_link'], old_sub_path, cookie, True)
                 threads.append(d)
             else:
-                d = Downloader(suburl, sub_path, cookie, True)
+                d = Downloader(vid_info['sub_link'], sub_path, cookie, True)
                 threads.append(d)
 
             for other_link in vid_info['other_links']:
