@@ -41,6 +41,7 @@ DATA_FILE = 'data.json'
 COOKIE_FILE = 'cookie.cookies'
 COURSE_DIR = os.getcwd()
 OTHER_DIR = 'Other Files'
+SUPPORTED_OTHER_FILE_EXTENSIONS = ['.xlsx', '.pptx', '.pdf']
 
 class Downloader(threading.Thread):
     """Instance of threading.Thread class.
@@ -77,11 +78,11 @@ def get_vid_sub_links(anchor_elems):
     for anchor_elem in anchor_elems:
         temp = pq(anchor_elem)
         href = temp.attr('href');
-        if href.find('subtitles') != -1 and href.find('format=srt') != -1:
+        if 'subtitles' in href and 'format=srt' in href:
             sub_link = href
-        elif href.find('download.mp4') != -1:
+        elif 'download.mp4' in href:
             vid_link = href
-        elif href.find('.pdf') != -1 or href.find('.pptx') != -1:
+        elif any([ext in href for ext in SUPPORTED_OTHER_FILE_EXTENSIONS]):
             other_links.append(href)
     return vid_link, sub_link, other_links
 
