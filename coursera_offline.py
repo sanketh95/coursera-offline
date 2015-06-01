@@ -90,7 +90,7 @@ def exit_with_message(msg):
     sys.exit()
     
 def has_cookiefile():
-    return path_exists(COOKIE_FILE)
+    return path_exists(absolute_path(COOKIE_FILE))
 
 def parse_arguments():
     # Uses argparse.Argument parser to parse
@@ -101,8 +101,6 @@ def parse_arguments():
     parser.add_argument("-e", "--email", help="Email id registered with Coursera")
     parser.add_argument("-p", "--password", help="Coursera Password")
     parser.add_argument("-S", "--synch", help="Give this flag to synch with Coursera", action='store_true')
-    parser.add_argument("-f","--file", help="""Give this flag to force the script to obtain the course information from data.json 
-        instead of Coursera""", action='store_true')
     parser.add_argument("-d", "--dir", help="Give this option to save the videos in the path specified as argument.\
      Defaults to Present Working Directory (PWD).")
     parser.add_argument("-a", "--auto", 
@@ -120,18 +118,14 @@ def validate_arguments(args):
     # Checks if both username and password are provided
     # Exits the script if either username or password is
     # not provided. 
-    if not args: exit_with_message('')
+    if not args: 
+        exit_with_message('')
     if not args.email or not args.password:
         if not has_cookiefile():
             exit_with_message('Please provide both email and password')
 
-    count = 0
-    if args.shortname is not None: count += 1
-    if args.synch: count +=1
-    if args.file: count +=1
-
-    if count is 0:
-        exit_with_message('One of the options -s, -S, -f must be given')
+    if not args.synch and not args.shortname:
+        exit_with_message('One of the arguments -s or -S must be given')
 
 def create_class_url(classname):
     if classname in ('', None):
@@ -144,7 +138,7 @@ def absolute_path(rel_path):
 
 def parse_data_file():
     # Parse the course data file
-    if not path_exists(DATA_FILE):
+    if not path_exists(absolute_path(DATA_FILE)):
         exit_with_message('Data file does not exist')
 
     try:
@@ -290,29 +284,36 @@ def schedule_synch(day, email, password):
     user_cron.write()
     print 'Cron Job added'
 
+def process_course_dir(args):
+    if args.synch and args.dir:
+        if not course_dir_exists(args.dir):
+            exit_with_message('Directory %s does not exist' % (args.dir))
+    elif args.dir:
+        set_course_dir(args.dir)
+
+def process_arguments(args):
+    process_course_dir(args)
+    if args.shortname:
+        return args.shortname, None
+    p = parse_data_file()
+    return p['shortname'], p
+
+def course_dir_exists(dir):
+    return os.path.exists(os.path.abspath(dir))
+
 def main():
     args = parse_arguments()
     validate_arguments(args)
-    if args.dir is not None:
-        set_course_dir(os.path.abspath(args.dir))
-    if args.shortname is not None:
-        if data_file_exists():
-            exit_with_message('Looks like a course already exists here.')
-        shortname = args.shortname
-    else:
-        parsed_json = parse_data_file()
-        shortname = parsed_json['cname']
+    shortname, parsed_json = process_arguments(args)
 
-    print 'Logging in'
+    print('Logging in')
     cookie_logged_in = login(args.email, args.password)
-    if not cookie_logged_in:
-        exit_with_message('Login Failed.')
 
-    if not args.file:
+    if parsed_json is None:
         parsed_json = get_course_info(shortname, cookie_logged_in)    
     save_data_file(parsed_json)
     download(parsed_json, cookie_logged_in)
-    if args.auto is not None:
+    if args.auto:
         schedule_synch(args.auto, args.email, args.password)        
 
 def save_data_file(parsed_json):
