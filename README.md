@@ -72,8 +72,8 @@ Run `export HTTP_PROXY=http://user:password@address:port` and `export HTTPS_PROX
 
 ## <a name="full-usage"></a>Full Usage
 ```
-usage: coursera_offline [-h] [-s SHORTNAME] [-e EMAIL] [-p PASSWORD] [-S] [-f]
-                        [-d DIR] [-a [AUTO]]
+usage: coursera_offline.py [-h] [-s SHORTNAME] [-e EMAIL] [-p PASSWORD] [-S]
+                           [-d DIR] [-a [AUTO]]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -85,8 +85,6 @@ optional arguments:
   -p PASSWORD, --password PASSWORD
                         Coursera Password
   -S, --synch           Give this flag to synch with Coursera
-  -f, --file            Give this flag to force the script to obtain the
-                        course information from data.json instead of Coursera
   -d DIR, --dir DIR     Give this option to save the videos in the path
                         specified as argument. Defaults to Present Working
                         Directory (PWD).
@@ -95,7 +93,6 @@ optional arguments:
                         automatically synch with Coursera. Argument must one
                         among 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'.
                         The argument is optional and defaults to 'SUN'
-
 ```
 
 ## <a name="some-sample-invocations"></a>Some sample invocations
@@ -148,11 +145,3 @@ coursera_offline -a <Day of the week> -s intrologic-005 -e <email> -p <password>
 You're downloading the course for the first time, and you don't want to keep using the 'Synch' command whenever you want to update the video content, you can just pass the `-a` flag which creates a crontab entry for the Synch command whch will be run at 11:59:59 pm on that particular day of the week. If no day is specified, it is defaulted to **Sunday**. 
 
 **Note:** You can still force the script to synch with Coursera by using the Synch command described above.
-
-
-#### <a name="fetch-using-file"></a>Fetch using file
-
-```
-coursera_offline -d ~/Logic -f -e <email> -p <password>
-```
-So, you might be wondering the point of saving the `data.json`, right ? That wasn't totally pointless. The file's data is acquired by fetching the coursera video lectures page, parsing the html content. All the information required to download that course's videos is in that file. So, as long as you have the file, you can download the course without fetching the lecture page and the above command is the way to do it.
