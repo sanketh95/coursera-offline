@@ -11,6 +11,7 @@ import threading
 import os
 from pyquery import PyQuery as pq
 from crontab import CronTab
+from urlparse import urlparse
 
 AUTH_URL = 'https://accounts.coursera.org/api/v1/login'
 CLASS_VIDEO_URL_TEMPLATE = 'https://class.coursera.org/%s/lecture'
@@ -229,7 +230,10 @@ def download(parsed_json, cookie):
                 threads.append(d)
 
             for other_link in vid_info['other_links']:
-                other_title = other_link.split('/')[-1]
+                u = urlparse(other_link)
+                other_title = u.path.split('/')[-1]
+                if not other_title:
+                    continue
                 other_path = os.path.join(folder_name, OTHER_DIR, str(count) + '-' + other_title)
                 if path_exists(other_path):
                     print 'Skipping %s' % other_path
