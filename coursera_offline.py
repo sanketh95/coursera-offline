@@ -194,6 +194,9 @@ def login(email, password):
     cookie_jar.save(ignore_discard=True)
     return cookie_jar
 
+def normalize_title(title):
+    return title.replace(':','-').replace('/','-').replace(',', '-')
+
 def download(parsed_json, cookie):
     # Downloads the videos in parsed json
     # using the cookie which is logged in
@@ -204,12 +207,12 @@ def download(parsed_json, cookie):
     threads = []
     print 'Downloading videos'
     for week_count, sub_json in enumerate(parsed_json['data']):
-        folder_name = str(week_count) + '-' + sub_json['title'].replace('/','-').replace(',','-').replace(':','-')
+        folder_name = str(week_count) + '-' + normalize_title(sub_json['title'])
         create_folder(folder_name)
         create_folder(os.path.join(folder_name, SUB_DIR))
         create_folder(os.path.join(folder_name, OTHER_DIR))
         for count, vid_info in enumerate(sub_json['links']):
-            title = vid_info['title'].replace(':', '-').replace('/', '-').replace(',','-')
+            title = normalize_title(vid_info['title'])
             old_vid_path = os.path.join(folder_name, title + VID_EXT)
             old_sub_path = os.path.join(folder_name, SUB_DIR, title + SUB_EXT)
             sub_path = os.path.join(folder_name, SUB_DIR, str(count) + '-' + title+SUB_EXT)
@@ -231,7 +234,7 @@ def download(parsed_json, cookie):
 
             for other_link in vid_info['other_links']:
                 u = urlparse(other_link)
-                other_title = u.path.split('/')[-1]
+                other_title = normalize_title(u.path.split('/')[-1])
                 if not other_title:
                     continue
                 other_path = os.path.join(folder_name, OTHER_DIR, str(count) + '-' + other_title)
