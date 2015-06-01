@@ -5,6 +5,13 @@
 
 Download and save the video lectures of your favorite courses for offline viewing.
 
+# Changes
+
+- When `-d` option is given and the given directory does not exist, exiting with error on -S option and creating the directory on -s option.
+- Extracting and normalizing the titles of files from urls.
+- Now supports download of excel files.
+- Deprecated -f option in favor of -S
+
 # Contents
 
 * [Installation](#installation)
